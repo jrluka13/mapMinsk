@@ -1,0 +1,127 @@
+html,body{
+    margin: 0;
+    padding: 0;
+}
+
+html,body,#map {
+    position: relative;
+    z-index: 1;
+    width: 1200px;
+    height: 584px;
+}
+
+#canvo{
+    position: absolute;
+    z-index: 4;
+    width: 1200px;
+    height: 584px;
+}
+/* #scaleInc,#scaleDec,#removeGreed,#returnGreed{
+    margin:2px;
+    height: 60px;
+    width: 60px;
+    cursor: pointer;
+    background-color: rgb(64,199,129);
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid rgb(64,199,129);
+    color: white;
+    font-weight: bolder;
+} */
+
+#newGrid{
+    margin: 2px;
+}
+
+form {
+    width: 400px;
+    height: 320px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    background-color: white;
+    flex-basis: auto;
+    justify-content: center;
+    align-items: center;
+}
+
+input,#removeGreed,#returnGreed,#fly{
+    width: 360px;
+    height: 30px;
+    margin-bottom: 20px;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+}
+
+
+
+#btn,#removeGreed,#returnGreed,#fly{
+    font-weight: 700;
+    color: black;
+    text-decoration: none;
+    padding: .8em 1em calc(.8em + 3px);
+    border-radius: 3px;
+    background: rgb(64,199,129);
+    box-shadow: 0 -3px rgb(53,167,110) inset;
+    transition: 0.2s;
+    cursor: pointer;
+    outline: none;
+} 
+#btn:hover {
+    background: rgb(53, 167, 110); 
+}
+#removeGreed:hover {
+    background: red; 
+}
+#returnGreed:hover {
+    background: yellow; 
+}
+#fly:hover {
+    background: blue; 
+}
+#fly:active{
+    background: blue;
+    box-shadow: 0 3px blue inset;
+}
+#btn:active {
+    background: rgb(33,147,90);
+    box-shadow: 0 3px rgb(33,147,90) inset;
+}
+#removeGreed:active {
+    background: red;
+    box-shadow: 0 3px red inset;
+}
+#returnGreed:active {
+    background: yellow;
+    box-shadow: 0 3px yellow inset;
+}
+
+#removeGreed{
+    background-color: red;
+    box-shadow: 0 -3px red inset;
+    border: 1px solid red;
+}
+
+#returnGreed{
+    background-color: yellow;
+    box-shadow: 0 -3px yellow inset;
+    border: 1px solid yellow;
+}
+
+#fly{
+    background-color: blue;
+    box-shadow: 0 -3px blue inset;
+    border: 1px solid blue;
+}
+
+#btn{
+    border: 1px solid rgb(33,147,90);;
+}
+
+#plane,#plane2{
+width: 100px;
+height: 100px;
+position: absolute;
+z-index: 2;
+}
