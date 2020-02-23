@@ -119,9 +119,13 @@ input,#removeGreed,#returnGreed,#fly{
     border: 1px solid rgb(33,147,90);;
 }
 
-#plane,#plane2{
+#plane,#plane2,#plane3{
+margin-top: 30px;
 width: 100px;
 height: 100px;
 position: absolute;
 z-index: 2;
 }
+
+
+

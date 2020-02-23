@@ -9,16 +9,28 @@
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="leaflet.css" />
     <script src="leaflet.js"></script>
+    <script src="leaflet-glicer-animated.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="leaflet.rotatedMarker.js"></script>
 </head>
 <body>
     
 
 
 
-<img id="plane" src="/проект/roll-o-plane.png">
+<!-- <img id="plane" src="/проект/roll-o-plane.png">
 <img id="plane2" src="/проект/roll-o-plane.png">
+<img id="plane3" src="/проект/roll-o-plane.png"> -->
 <canvas id="canvo" width="1200" height="584"></canvas>
 <div id="map"></div>
+
+<select id="name">
+    <option value="#">pick flight</option>
+    <option id="1">TK7434</option>
+    <option value="2">Пункт 2</option>
+    <option value="3">Пункт 3</option>
+</select>
+
 <Form name="updeteGrid" id="newGrid">
     <input name="newX" size="25">
     <input name="newY" size="25">
@@ -28,12 +40,7 @@
     <input type="button" value="lets" onclick="go()" id = "fly"> 
 </Form>
 
-
-
-
-<script src="PapaParse-5.0.2/papaparse.js"></script>
 <script src="index.js"></script> 
-
 
 
 </body>

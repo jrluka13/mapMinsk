@@ -7,8 +7,9 @@ let newX;
 let newY;
 
 
+
 let map = L.map('map', {
-}).setView([53.8991, 27.5661], 13);
+}).setView([38.908,35.420],6);
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
 
@@ -105,93 +106,134 @@ canvas.onmouseup = function (event) {
 
 };
 
+// var marker = new L.Marker([40.9032,29.3132]);
+// map.addLayer(marker);
+// var items = [{
+  
+//   lat: "40.9963",
+//   lon: "39.7808"
+// }];
 
+// drawData();
 
+// function drawData() {
+//   var item, o;
+//   //draw markers for all items
+//   for (item in items) {
+//       o = items[item];
+//       var loc = new L.LatLng(o.lat, o.lon);
+//       createPolyLine(loc,[40.9032,29.3132]);
+//   }
+// }
 
+function createPolyLine(loc1, loc2) {
 
-function planeMooving(planeId, xx1, xx2, yy1, yy2, angle, speed) {
-  let element = document.getElementById(planeId)
-  element.style.transform = 'rotate(-' + angle + 'deg)'
-  let x1 = xx1
-  let x2 = xx2
-  let y1 = yy1
-  let y2 = yy2
-  let x = x1
-  let y = y1
-  element.style.left = x1 + 'px'
-  element.style.bottom = y1 + 'px'
-  let id = setInterval(frame, speed)
-  let bool = true
+  var latlongs = [loc1, loc2];
+  var polyline = new L.Polyline(latlongs, {
+      color: 'green',
+      opacity: 1,
+      weight: 1,
+      clickable: false
+  }).addTo(map);
+ 
+  var s = 'About ' + (loc1.distanceTo(loc2) / 1000).toFixed(0) + 'km away from you.</p>';
 
-  function frame() {
-    if (x == x2 && y == y2) {
-      let xp = x1
-      let yp = y1
-      x1 = x2
-      y1 = y2
-      y2 = yp
-      x2 = xp
-      bool
-        ? (element.style.transform = 'rotate(' + (180 - angle) + 'deg)')
-        : (element.style.transform = 'rotate(-' + angle + 'deg)')
-      bool = !bool
-    } else {
-      if (x2 > x1) {
-        x++
-        element.style.left = x + 'px'
-      } else {
-        x--
-        element.style.left = x + 'px'
-      }
-      if (y2 > y1) {
-        y = ((x - x1) * (y2 - y1)) / (x2 - x1) + y1
-        element.style.bottom = y + 'px'
-      } else {
-        y = ((x - x2) * (y1 - y2)) / (x1 - x2) + y2
-        element.style.bottom = y + 'px'
-      }
-    }
+  var marker = L.marker(loc1).addTo(map);
+  if (marker) {
+      marker.bindPopup(s);
   }
 }
-
-// planeMooving("plane",10,500,500,150,0,5);
-function go(){
-  planeMooving("plane",10,500,500,150,300,5);
-  planeMooving("plane2",1000,500,500,150,180,5);
+L.Icon.Default.prototype.options = {
+  iconUrl: 'whatever.png',
+  iconSize: [20, 70],
+  iconAnchor: [10, 70],
+ 
 }
-// setTimeout(planeMooving("plane",10,500,500,150,0,5),2000);
+
+var iconPlane = L.icon({
+  iconUrl:'/проект/plane.png',
+  iconSize: [48, 48],
+  
+});
+
+
+
+//create polyline with gps coordinates
+var pathPlane = L.polyline([
+  [40.9032,29.3132],
+  [40.9963,39.7808]
+  
+
+]);
+
+
+function planefly(){
+var marker = new L.Marker([40.9032,29.3132]);
+map.addLayer(marker);
+var items = [{
+  
+  lat: "40.9963",
+  lon: "39.7808"
+}];
+
+drawData();
+
+function drawData() {
+  var item, o;
+  //draw markers for all items
+  for (item in items) {
+      o = items[item];
+      var loc = new L.LatLng(o.lat, o.lon);
+      createPolyLine(loc,[40.9032,29.3132]);
+  }
+}
+  
+    //create vaporeto marker, speed : 50000 meters/seconds
+    var palneMarker = L.GlAnimatedMarker(pathPlane.getLatLngs(), { icon: iconPlane, speed: 100000 });
+    //add marker to leaflet map
+    
+    map.addLayer(palneMarker);
+
+    
+  
+    
+  
+}
+
+let pick = document.getElementById('name');
+pick.onchange = function(){
+  let a = document.getElementById('name').value;
+  if(a="TK7434"){
+    planefly();
+    console.log(a);
+  } 
+}
 
 
 
 
+// fetch('http://51.38.90.176:3000/demo1?f15=eq.TK7434&order=f1.asc')
+//   .then((response) => {
+//     return response.json();
+//   })
+//   .then((myJson) => {
+//     // let newJSON = JSON.stringify(myJson);
 
-// let selectedFile  = document.getElementById('input').files[0];
-// Papa.parse(selectedFile,{
-//   complete: function(result){
-//     console.log(result.data);
-//   }
-// });
-
-// var fs = require('fs');
-// var Papa = require('papaparse');
-// var file = '/проект/01052019.csv.bz2';
-// // When the file is a local file when need to convert to a file Obj.
-// //  This step may not be necissary when uploading via UI
-// var content = fs.readFileSync(file, "utf8");
-
-// var rows;
-// Papa.parse(content, {
-//     header: false,
-//     delimiter: "\t",
-//     complete: function(results) {
-//         console.log("Finished:", results.data);
-//     rows = results.data;
-//     }
-// });
-
-
-
-
+   
+//       // for(let key in myJson){
+//       //   for(let i = 0;i<20;i++){
+//       //     if(i=3){
+//       //       console.log(myJson[i][key]);
+//       //     }
+          
+//       //   }
+        
+//       // }
+      
+    
+      
+    
+//   });
 
 
 
