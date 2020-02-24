@@ -5,7 +5,10 @@ let arrayOfY = [];
 let profit = [];
 let newX;
 let newY;
-
+let arrLat = [];
+let arrLon = [];
+let flightplane = [];
+let time = [];
 
 
 let map = L.map('map', {
@@ -22,9 +25,7 @@ map.on('click', onMapClick);
 
 let canvas = document.querySelector('canvas'),
   context = canvas.getContext('2d');
-  // scale = 50,
-  // minScale = 9,
-  // maxScale = 200;
+ 
     
 function drawGrid() {
   arrayOfX = [];
@@ -58,13 +59,7 @@ function drawGrid() {
 
 
 
-// document.querySelector('#scaleInc').addEventListener('click', function() {
-//    changeScale(scale - 5);
-// });
 
-// document.querySelector('#scaleDec').addEventListener('click', function() {
-//   changeScale(scale + 5);
-// });
 
 document.getElementById('removeGreed').addEventListener('click',function(){
  
@@ -77,10 +72,7 @@ document.getElementById('returnGreed').addEventListener('click',function(){
   canvas.style.zIndex = '4';
 })
 
-// function changeScale(newScale) {
-//   scale = Math.max(minScale, Math.min(newScale, maxScale));
-//   drawGrid();
-// }
+
 
 canvas.onmousedown = function (event) {
   x = event.offsetX;
@@ -106,50 +98,6 @@ canvas.onmouseup = function (event) {
 
 };
 
-// var marker = new L.Marker([40.9032,29.3132]);
-// map.addLayer(marker);
-// var items = [{
-  
-//   lat: "40.9963",
-//   lon: "39.7808"
-// }];
-
-// drawData();
-
-// function drawData() {
-//   var item, o;
-//   //draw markers for all items
-//   for (item in items) {
-//       o = items[item];
-//       var loc = new L.LatLng(o.lat, o.lon);
-//       createPolyLine(loc,[40.9032,29.3132]);
-//   }
-// }
-
-function createPolyLine(loc1, loc2) {
-
-  var latlongs = [loc1, loc2];
-  var polyline = new L.Polyline(latlongs, {
-      color: 'green',
-      opacity: 1,
-      weight: 1,
-      clickable: false
-  }).addTo(map);
- 
-  var s = 'About ' + (loc1.distanceTo(loc2) / 1000).toFixed(0) + 'km away from you.</p>';
-
-  var marker = L.marker(loc1).addTo(map);
-  if (marker) {
-      marker.bindPopup(s);
-  }
-}
-L.Icon.Default.prototype.options = {
-  iconUrl: 'whatever.png',
-  iconSize: [20, 70],
-  iconAnchor: [10, 70],
- 
-}
-
 var iconPlane = L.icon({
   iconUrl:'/проект/plane.png',
   iconSize: [48, 48],
@@ -157,48 +105,51 @@ var iconPlane = L.icon({
 });
 
 
-
-//create polyline with gps coordinates
-var pathPlane = L.polyline([
-  [40.9032,29.3132],
-  [40.9963,39.7808]
+// parse json
+let data = null;
+$.getJSON("flights.json",function(result){
+  data = result;
+  for(let i = 0;i<=data.length-1;i++){
+    let project = data[i];
+    flightplane[i] = [project['lat'],project['lon']];
+    time[i] = [project['dati']];
+  }
+  console.log(time);
+  console.log(flightplane);
   
-
-]);
-
+  
+})
 
 function planefly(){
-var marker = new L.Marker([40.9032,29.3132]);
-map.addLayer(marker);
-var items = [{
-  
-  lat: "40.9963",
-  lon: "39.7808"
-}];
-
-drawData();
-
-function drawData() {
-  var item, o;
-  //draw markers for all items
-  for (item in items) {
-      o = items[item];
-      var loc = new L.LatLng(o.lat, o.lon);
-      createPolyLine(loc,[40.9032,29.3132]);
-  }
-}
+  let pathline = L.polyline(flightplane,{color:'red'});
+  pathline.addTo(map);
+  var pathLinePlane = L.polyline(flightplane);
   
     //create vaporeto marker, speed : 50000 meters/seconds
-    var palneMarker = L.GlAnimatedMarker(pathPlane.getLatLngs(), { icon: iconPlane, speed: 100000 });
-    //add marker to leaflet map
-    
-    map.addLayer(palneMarker);
+    // var palneMarker = L.GlAnimatedMarker(pathPlane.getLatLngs(), { icon: iconPlane, speed: 100000 });
+    // //add marker to leaflet map
+    // map.addLayer(palneMarker);
 
-    
-  
-    
-  
+    let index=0;
+    let current=time[0];
+    let Trigger=true;
+    let id = setInterval(frame, 1000)
+    function frame(){
+      console.log("current :" + current+" time :"+time[index] + " index :" +index)
+      if(current == time[index]){ 
+            ++index;
+      var animatedMarker = L.animatedMarker(pathLinePlane.getLatLngs(), {
+      icon: iconPlane
+    });
+    map.addLayer(animatedMarker);
+  }if(current<time[index])
+  current++;
+    }
 }
+
+
+
+
 
 let pick = document.getElementById('name');
 pick.onchange = function(){
@@ -212,28 +163,7 @@ pick.onchange = function(){
 
 
 
-// fetch('http://51.38.90.176:3000/demo1?f15=eq.TK7434&order=f1.asc')
-//   .then((response) => {
-//     return response.json();
-//   })
-//   .then((myJson) => {
-//     // let newJSON = JSON.stringify(myJson);
 
-   
-//       // for(let key in myJson){
-//       //   for(let i = 0;i<20;i++){
-//       //     if(i=3){
-//       //       console.log(myJson[i][key]);
-//       //     }
-          
-//       //   }
-        
-//       // }
-      
-    
-      
-    
-//   });
 
 
 

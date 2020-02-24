@@ -35,7 +35,7 @@ html,body,#map {
 
 form {
     width: 400px;
-    height: 320px;
+    height: 290px;
     display: flex;
     flex-direction: column;
     border: 1px solid lightgrey;

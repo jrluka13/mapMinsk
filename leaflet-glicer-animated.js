@@ -85,7 +85,7 @@ L.GlAnimatedMarkerPlugin = L.Marker.extend({
         if (reverse) {
             this._originalLatlngs.reverse();
         }
-
+        
         this._latlngs = this._originalLatlngs.slice();
         this._latlngslen = this._originalLatlngs.length;
         this._end = false;
