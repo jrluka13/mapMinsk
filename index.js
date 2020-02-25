@@ -8,11 +8,12 @@ let newY;
 let arrLat = [];
 let arrLon = [];
 let flightplane = [];
+let flightplane_300 = []; 
 let time = [];
 
 
 let map = L.map('map', {
-}).setView([38.908,35.420],6);
+}).setView([39.334,34.651],6);
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
 
@@ -98,11 +99,7 @@ canvas.onmouseup = function (event) {
 
 };
 
-var iconPlane = L.icon({
-  iconUrl:'/проект/plane.png',
-  iconSize: [48, 48],
-  
-});
+
 
 
 // parse json
@@ -116,36 +113,84 @@ $.getJSON("flights.json",function(result){
   }
   console.log(time);
   console.log(flightplane);
-  
-  
 })
 
+let data1 = null;
+$.getJSON("300flights.json",function(result){
+  data1 = result;
+  for(let i = 0;i<=data1.length-1;i++){
+    let project1 = data1[i];
+    flightplane_300[i] = [project1['lat'],project1['lon']];
+  }
+  
+})
+console.log(flightplane_300);
+
+
+      
 function planefly(){
+  var iconPlane = L.icon({
+    iconUrl:'/проект/plane.png',
+    iconSize: [48, 48],
+    
+  });
   let pathline = L.polyline(flightplane,{color:'red'});
   pathline.addTo(map);
-  var pathLinePlane = L.polyline(flightplane);
-  
-    //create vaporeto marker, speed : 50000 meters/seconds
-    // var palneMarker = L.GlAnimatedMarker(pathPlane.getLatLngs(), { icon: iconPlane, speed: 100000 });
-    // //add marker to leaflet map
-    // map.addLayer(palneMarker);
-
+  // var pathLinePlane = L.polyline(flightplane);
+  // var animatedMarker = L.animatedMarker(pathLinePlane.getLatLngs(), {
+  //   icon: iconPlane
+  // });
     let index=0;
     let current=time[0];
-    let Trigger=true;
-    let id = setInterval(frame, 1000)
+    let id = setInterval(frame,1000);
     function frame(){
-      console.log("current :" + current+" time :"+time[index] + " index :" +index)
-      if(current == time[index]){ 
+        console.log("current :" + current+" time :"+time[index] + " index :" +index);
+          if(current == time[index]){ 
             ++index;
-      var animatedMarker = L.animatedMarker(pathLinePlane.getLatLngs(), {
-      icon: iconPlane
-    });
-    map.addLayer(animatedMarker);
-  }if(current<time[index])
-  current++;
+              var animationMarker = L.Marker.movingMarker(
+                flightplane,
+                20000,{autostart: true});
+                animationMarker.options.icon = iconPlane;
+              map.addLayer(animationMarker);
+          }
+        
+    if(current<time[index])
+    current++;
+      
+      
     }
 }
+
+function flights_300Fly(){
+    for(let i=0;flightplane_300.length;i++){
+      L.marker([flightplane_300[i][0],flightplane_300[i][1]] ,{icon: iconPlane}).addTo(map);
+     
+    }
+}
+
+flights_300Fly();
+
+
+
+// var markers = [
+//   [ -0.1244324, 51.5006728],
+//   [ -0.119623, 51.503308],
+//   [ -0.1279688, 51.5077286] 
+// ];
+
+// //Loop through the markers array
+// for (var i=0; i<flightplane_300.length; i++) {
+ 
+//   var lon = flightplane_300[i][0];
+//   var lat = flightplane_300[i][1];
+  
+  
+//    var markerLocation = new L.LatLng(lat, lon);
+//    L.Marker(markerLocation,{iconPlane}).addTo(map);
+  
+
+// }
+
 
 
 
@@ -157,7 +202,11 @@ pick.onchange = function(){
   if(a="TK7434"){
     planefly();
     console.log(a);
-  } 
+  }
+  // else if(a="300flights") {
+  //   flights_300Fly();
+  //   console.log(a);
+  // }
 }
 
 
