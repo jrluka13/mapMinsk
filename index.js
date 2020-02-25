@@ -13,7 +13,7 @@ let time = [];
 
 
 let map = L.map('map', {
-}).setView([39.334,34.651],6);
+}).setView([39.334,34.651],4);
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
 
@@ -113,6 +113,22 @@ $.getJSON("flights.json",function(result){
   }
   console.log(time);
   console.log(flightplane);
+//create pathline for plane
+  // var myLines = {
+  //   "type": "LineString",
+  //   "coordinates": flightplane
+  // };
+  
+  // var myStyle = {
+  //   "color": "#ff7800",
+  //   "weight": 5,
+  //   "opacity": 0.65
+  // };
+  
+  // L.geoJSON(myLines, {
+  //   style: myStyle
+  // }).addTo(map);
+
 })
 
 let data1 = null;
@@ -122,12 +138,27 @@ $.getJSON("300flights.json",function(result){
     let project1 = data1[i];
     flightplane_300[i] = [project1['lat'],project1['lon']];
   }
-  
+  console.log(flightplane_300);
+  // create a lot of planes on the map
+  for (var i=0; i<flightplane_300.length; i++) {
+ 
+    var lon = flightplane_300[i][0];
+    var lat = flightplane_300[i][1];
+    
+    
+     var markerLocation = new L.LatLng(lat, lon);
+     L.marker(markerLocation,{icon:iconPlane}).addTo(map);
+  }
 })
-console.log(flightplane_300);
+
+var iconPlane = L.icon({
+  iconUrl:'/проект/plane.png',
+  iconSize: [48, 48],
+}); 
+// L.marker([40.9032,29.3132],{icon: iconPlane}).addTo(map);   
 
 
-      
+
 function planefly(){
   var iconPlane = L.icon({
     iconUrl:'/проект/plane.png',
@@ -160,39 +191,6 @@ function planefly(){
       
     }
 }
-
-function flights_300Fly(){
-    for(let i=0;flightplane_300.length;i++){
-      L.marker([flightplane_300[i][0],flightplane_300[i][1]] ,{icon: iconPlane}).addTo(map);
-     
-    }
-}
-
-flights_300Fly();
-
-
-
-// var markers = [
-//   [ -0.1244324, 51.5006728],
-//   [ -0.119623, 51.503308],
-//   [ -0.1279688, 51.5077286] 
-// ];
-
-// //Loop through the markers array
-// for (var i=0; i<flightplane_300.length; i++) {
- 
-//   var lon = flightplane_300[i][0];
-//   var lat = flightplane_300[i][1];
-  
-  
-//    var markerLocation = new L.LatLng(lat, lon);
-//    L.Marker(markerLocation,{iconPlane}).addTo(map);
-  
-
-// }
-
-
-
 
 
 
