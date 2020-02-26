@@ -9,7 +9,10 @@ let arrLat = [];
 let arrLon = [];
 let flightplane = [];
 let flightplane_300 = []; 
+let flightName = [];
 let time = [];
+let puthAlotOfPlane = [];
+
 
 
 let map = L.map('map', {
@@ -66,6 +69,11 @@ document.getElementById('removeGreed').addEventListener('click',function(){
  
   context.clearRect(0, 0, canvas.width, canvas.height);
   canvas.style.zIndex = '1';
+  // function createRoutes(){
+  //   let puthLine300 = L.polyline(puthAlotOfPlane,{color: 'red'});
+  //   puthLine300.addTo(map);
+  // }
+  createRoutes();
 });
 document.getElementById('returnGreed').addEventListener('click',function(){
   
@@ -111,7 +119,9 @@ $.getJSON("flights.json",function(result){
     flightplane[i] = [project['lat'],project['lon']];
     time[i] = [project['dati']];
   }
+  console.log("time:");
   console.log(time);
+  console.log("puth polyline: ");
   console.log(flightplane);
 //create pathline for plane
   // var myLines = {
@@ -131,15 +141,54 @@ $.getJSON("flights.json",function(result){
 
 })
 
+//sorted of uniq
+
+function sort(arr) {
+  
+    arr.sort((a, b) => a.f18 > b.f18 ? 1 : -1);
+}
+
+
+
+
+
 let data1 = null;
 $.getJSON("300flights.json",function(result){
   data1 = result;
   for(let i = 0;i<=data1.length-1;i++){
     let project1 = data1[i];
-    flightplane_300[i] = [project1['lat'],project1['lon']];
+    
+    flightName[i] = project1['f18'];
+    
+    
   }
-  console.log(flightplane_300);
-  // create a lot of planes on the map
+//massiv unique plane
+let used = {};
+
+    let filtered = data1.filter(function (obj) {
+        return obj.f18 in used ? 0: (used[obj.f18]=1);
+
+    });
+    console.log(filtered);
+    
+    for(let i = 0;i<=filtered.length-1;i++){
+      let project4 = filtered[i];
+      flightplane_300[i] = [project4['lon'],project4['lat']];
+    }
+    
+console.log(flightplane_300);
+sort(data1);
+console.log(data1[0]);
+
+
+//create a lot of rotes
+for(let i = 0; i<=data1.length - 1;i++){
+  let project3 = data1[i];
+  puthAlotOfPlane[i] = [project3['lat'],project3['lon']];
+}
+console.log(puthAlotOfPlane);
+  
+  // create a lot of points of planes on the map
   for (var i=0; i<flightplane_300.length; i++) {
  
     var lon = flightplane_300[i][0];
@@ -159,12 +208,13 @@ var iconPlane = L.icon({
 
 
 
+//animate plane
 function planefly(){
   var iconPlane = L.icon({
     iconUrl:'/проект/plane.png',
     iconSize: [48, 48],
-    
   });
+
   let pathline = L.polyline(flightplane,{color:'red'});
   pathline.addTo(map);
   // var pathLinePlane = L.polyline(flightplane);
