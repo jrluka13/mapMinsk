@@ -11,9 +11,9 @@ let flightplane = [];
 let flightplane_300 = []; 
 let flightName = [];
 let time = [];
-let puthAlotOfPlane = [];
-
-
+let sortFlight = [];
+let arrObject = [];
+let arrObjectCor = [];
 
 let map = L.map('map', {
 }).setView([39.334,34.651],4);
@@ -69,11 +69,7 @@ document.getElementById('removeGreed').addEventListener('click',function(){
  
   context.clearRect(0, 0, canvas.width, canvas.height);
   canvas.style.zIndex = '1';
-  // function createRoutes(){
-  //   let puthLine300 = L.polyline(puthAlotOfPlane,{color: 'red'});
-  //   puthLine300.addTo(map);
-  // }
-  createRoutes();
+  
 });
 document.getElementById('returnGreed').addEventListener('click',function(){
   
@@ -119,10 +115,10 @@ $.getJSON("flights.json",function(result){
     flightplane[i] = [project['lat'],project['lon']];
     time[i] = [project['dati']];
   }
-  console.log("time:");
-  console.log(time);
-  console.log("puth polyline: ");
-  console.log(flightplane);
+  // console.log("time:");
+  // console.log(time);
+  // console.log("puth polyline: ");
+  // console.log(flightplane);
 //create pathline for plane
   // var myLines = {
   //   "type": "LineString",
@@ -142,52 +138,33 @@ $.getJSON("flights.json",function(result){
 })
 
 //sorted of uniq
-
 function sort(arr) {
-  
     arr.sort((a, b) => a.f18 > b.f18 ? 1 : -1);
 }
 
-
-
-
-
+// parse json
 let data1 = null;
 $.getJSON("300flights.json",function(result){
   data1 = result;
-  for(let i = 0;i<=data1.length-1;i++){
-    let project1 = data1[i];
-    
-    flightName[i] = project1['f18'];
-    
-    
-  }
+  
 //massiv unique plane
 let used = {};
 
     let filtered = data1.filter(function (obj) {
-        return obj.f18 in used ? 0: (used[obj.f18]=1);
+        return obj.f15 in used ? 0: (used[obj.f15]=1);
 
     });
-    console.log(filtered);
+    // console.log("Sorted array of unique");
+    // console.log(filtered);
     
     for(let i = 0;i<=filtered.length-1;i++){
+      
       let project4 = filtered[i];
       flightplane_300[i] = [project4['lon'],project4['lat']];
+      
     }
-    
 console.log(flightplane_300);
-sort(data1);
-console.log(data1[0]);
 
-
-//create a lot of rotes
-for(let i = 0; i<=data1.length - 1;i++){
-  let project3 = data1[i];
-  puthAlotOfPlane[i] = [project3['lat'],project3['lon']];
-}
-console.log(puthAlotOfPlane);
-  
   // create a lot of points of planes on the map
   for (var i=0; i<flightplane_300.length; i++) {
  
@@ -198,7 +175,66 @@ console.log(puthAlotOfPlane);
      var markerLocation = new L.LatLng(lat, lon);
      L.marker(markerLocation,{icon:iconPlane}).addTo(map);
   }
+
 })
+$.getJSON('300flights.json', function(result) {
+  data = result;
+  for (let i = 0; i <= data.length - 1; i++) {
+      if (data[i]['f15'] != '') {
+          sortFlight.push(data[i]);
+      }
+  }
+ 
+  sort(sortFlight);
+  //Arr Of objects
+  createArrayOfObjects();
+  
+  for(let i =0;i<sortFlight.length;i++){
+    if(flightName.indexOf(sortFlight[i]['f15'])==(-1) ){
+      flightName.push(sortFlight[i]['f15']);
+      arrObject[i].position.push([sortFlight[i]['lat'],sortFlight[i]['lon']]);
+      arrObject[i].time.push(sortFlight[i]['dati']);
+    }
+    else{
+      arrObject[flightName.indexOf(sortFlight[i]['f15'])].position.push([sortFlight[i]['lat'], sortFlight[i]['lon']]);
+            arrObject[flightName.indexOf(sortFlight[i]['f15'])].time.push(sortFlight[i]['dati']);
+    }
+  }
+
+  for(let i =0;i<flightName.length;i++){
+    arrObject[i].name = flightName[i];
+  }
+  for(let i =0;i<arrObject.length;i++){
+    if(arrObject[i].name != ""){
+      arrObjectCor[i] = arrObject[i];
+    } 
+  }
+  console.log(arrObjectCor);
+
+for(let i =0;i<arrObjectCor.length;i++){
+  L.polyline(arrObjectCor[i].position,{color:'red'}).addTo(map);
+}
+
+
+// for(let i=0;i<arrObjectCor.length;i++){
+//   let project4 = arrObjectCor[i].position[0];
+//   L.marker(project4,{icon:iconPlane}).addTo(map);
+//   console.log(project4);
+// }
+
+
+});
+function createArrayOfObjects(){
+  for(let i = 0;i<data.length;i++){
+    arrObject[i]={name: '',position:[],time:[]};
+  }
+}
+
+
+
+
+
+
 
 var iconPlane = L.icon({
   iconUrl:'/проект/plane.png',
