@@ -1,49 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="leaflet.css" />
-    <script src="leaflet.js"></script>
-    <script src="leaflet-glicer-animated.js"></script>
-    <script src="AnimatedMarker.js"></script>
+    <link rel="stylesheet" href="OL/ol.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="leaflet.rotatedMarker.js"></script>
-    <script src="MovingMarker.js"></script>
-    
 </head>
 <body>
+    <canvas id="canvo" width="1200" height="584"></canvas>
+    <div id="map"></div>
+
+    <select id="echo" >
+        <option value="50">50</option>
+      <option value="400">400</option>
+      <option value="500">500</option>
+      <option value="600">600</option>
+      <option value="800">800</option>
+      <option value="1000">1000</option>
+      <option value="1500">1500</option>
+      <option value="2000">2000</option>
+      <option value="4000">4000</option>
+      <option value="5000">5000</option>
+      <option value="10000">10000</option>
+    </select>
     
+  
 
-
-
-<!-- <img id="plane" src="/проект/roll-o-plane.png">
-<img id="plane2" src="/проект/roll-o-plane.png">
-<img id="plane3" src="/проект/roll-o-plane.png"> -->
-<canvas id="canvo" width="1200" height="584"></canvas>
-<div id="map"></div>
-
-<select id="name">
-    <option value="#">pick flight</option>
-    <option id="1">TK7434</option>
-    <option value="2">300flights</option>
-    <option value="3">Пункт 3</option>
-</select>
-
-<Form name="updeteGrid" id="newGrid">
-    <input name="newX" size="25">
-    <input name="newY" size="25">
-    <input type="button" value="apply" onclick="drawGrid()" id="btn">
-    <input type="button" value="remove"  id="removeGreed">
-    <input type="button" value="return"  id="returnGreed">
-</Form>
-
-<script src="index.js"></script> 
-
-
+    <Form name="updeteGrid" id="newGrid">
+        <input name="epoch1" size="25"  placeholder="Epoch start" id="epoch1">
+        <input name="epoch2" size="25" placeholder="Epoch finish" id="epoch2">
+        <input type="button" value="execute" class ="btn" onclick="setEpoch()">
+        <input name="newX" size="25" placeholder="X">
+        <input name="newY" size="25" placeholder="Y"> 
+        <input type="button" value="apply" onclick="drawGrid()" class="btn">
+        <input type="button" value="remove"  id="removeGreed">
+        <input type="button" value="return"  id="returnGreed">
+        <input type="button" value="fly" id="fly" onclick="Fly()">
+        <input type='file' accept='text/plain' onchange='parse(event)'>
+    </Form>
+    <script src="OL/ol.js"></script>
+    <script src="index.js"></script>
 </body>
 </html>

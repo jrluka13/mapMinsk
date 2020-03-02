@@ -1,308 +1,314 @@
-let x;
-let y;
+
 let arrayOfX = [];
 let arrayOfY = [];
 let profit = [];
 let newX;
 let newY;
-let arrLat = [];
-let arrLon = [];
-let flightplane = [];
-let flightplane_300 = []; 
-let flightName = [];
-let time = [];
+let planes = [];
+let JSONstirngs= null;
+let objectParsedJSON = null;
+let arrFeatures = [];
 let sortFlight = [];
-let arrObject = [];
-let arrObjectCor = [];
+let time = [];
+let flightName = [];
+let StartTime = null;
+let EndTime = null;
+let ep1;
+let ep2;
+let arrEp = [];
+//////
 
-let map = L.map('map', {
-}).setView([39.334,34.651],4);
+// let flightplane = [];
+// let flightplane_300 = []; 
 
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+// let arrObject = [];
+// let arrObjectCor = [];
 
-function onMapClick(e) {
-    console.log("Coordinates:" + e.latlng);
-}
 
-map.on('click', onMapClick);
 
+var map = new ol.Map({
+    target: 'map',
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.OSM()
+      })
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([35.41, 38.82]),
+      zoom: 6
+    })
+});
 
 let canvas = document.querySelector('canvas'),
-  context = canvas.getContext('2d');
- 
-    
+context = canvas.getContext('2d');
+
 function drawGrid() {
-  arrayOfX = [];
-  arrayOfY = [];
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  newX = parseInt(document.updeteGrid.newX.value);
-  newY = parseInt(document.updeteGrid.newY.value);
-  context.beginPath();
+    arrayOfX = [];
+    arrayOfY = [];
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    newX = parseInt(document.updeteGrid.newX.value);
+    newY = parseInt(document.updeteGrid.newY.value);
+    context.beginPath();
+    
+    for ( x = 0; x <= canvas.width; x += newX) {
+      context.moveTo(x, 0);
+      context.lineTo(x, canvas.height);
+    }
   
-  for ( x = 0; x <= canvas.width; x += newX) {
-    context.moveTo(x, 0);
-    context.lineTo(x, canvas.height);
-  }
-
-  for ( y = 0; y <= canvas.height; y += newY) {
-    context.moveTo(0, y);
-    context.lineTo(canvas.width, y);
-  }
-
-  context.stroke();
-
-  for ( x = 0; x <= canvas.width; x += newX) {
-    arrayOfX.push(Math.floor(x));
-  }
-
-  for ( y = 0; y <= canvas.height; y += newY) {
-    arrayOfY.push(Math.floor(y));
-  }
-
+    for ( y = 0; y <= canvas.height; y += newY) {
+      context.moveTo(0, y);
+      context.lineTo(canvas.width, y);
+    }
+  
+    context.stroke();
+  
+    for ( x = 0; x <= canvas.width; x += newX) {
+      arrayOfX.push(Math.floor(x));
+    }
+  
+    for ( y = 0; y <= canvas.height; y += newY) {
+      arrayOfY.push(Math.floor(y));
+    }
+  
 }
-
-
-
-
-
-document.getElementById('removeGreed').addEventListener('click',function(){
- 
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  canvas.style.zIndex = '1';
   
+document.getElementById('removeGreed').addEventListener('click',function(){
+   
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.style.zIndex = '1';
+    
 });
 document.getElementById('returnGreed').addEventListener('click',function(){
-  
-  drawGrid();
-  canvas.style.zIndex = '4';
+    
+    drawGrid();
+    canvas.style.zIndex = '4';
 })
 
-
-
 canvas.onmousedown = function (event) {
-  x = event.offsetX;
-  y = event.offsetY;
+    x = event.offsetX;
+    y = event.offsetY;
 };
 
 canvas.onmouseup = function (event) {
   
-  for (let i = 0; i < arrayOfX.length; i++) {
+for (let i = 0; i < arrayOfX.length; i++) {
       if (x <= arrayOfX[i + 1] && x >= arrayOfX[i]) {
-          profit.push(arrayOfX[i]);
+        profit.push(arrayOfX[i]);
       }
-  }
-  for (let i = 0; i < arrayOfY.length; i++) {
-      if (y <= arrayOfY[i + 1] && y >= arrayOfY[i]) {
-          profit.push(arrayOfY[i]);
-      }
-  }
-  context.rect(profit[0] + 0.5, profit[1], newX, newY);
-  context.fillStyle = "red";
-  context.fill();
-  profit = [];
-
+}
+for (let i = 0; i < arrayOfY.length; i++) {
+    if (y <= arrayOfY[i + 1] && y >= arrayOfY[i]) {
+        profit.push(arrayOfY[i]);
+    }
+}
+context.rect(profit[0] + 0.5, profit[1], newX, newY);
+context.fillStyle = "red";
+context.fill();
+profit = [];
+  
 };
 
+class Plane{
+    constructor(Name){
+        this.name=Name;
+        this.Time=[];
+        this.TimeNew = [];
+        this.Puth=[];
+        this.ExempleFeature=null;
+    }
+    
+    
+} 
 
-
-
-// parse json
-let data = null;
-$.getJSON("flights.json",function(result){
-  data = result;
-  for(let i = 0;i<=data.length-1;i++){
-    let project = data[i];
-    flightplane[i] = [project['lat'],project['lon']];
-    time[i] = [project['dati']];
-  }
-  // console.log("time:");
-  // console.log(time);
-  // console.log("puth polyline: ");
-  // console.log(flightplane);
-//create pathline for plane
-  // var myLines = {
-  //   "type": "LineString",
-  //   "coordinates": flightplane
-  // };
-  
-  // var myStyle = {
-  //   "color": "#ff7800",
-  //   "weight": 5,
-  //   "opacity": 0.65
-  // };
-  
-  // L.geoJSON(myLines, {
-  //   style: myStyle
-  // }).addTo(map);
-
-})
-
-//sorted of uniq
-function sort(arr) {
-    arr.sort((a, b) => a.f18 > b.f18 ? 1 : -1);
-}
-
-// parse json
-let data1 = null;
-$.getJSON("300flights.json",function(result){
-  data1 = result;
-  
-//massiv unique plane
-let used = {};
-
-    let filtered = data1.filter(function (obj) {
-        return obj.f15 in used ? 0: (used[obj.f15]=1);
-
+function drawPlane(lat,lon){
+    var iconFeature = new ol.Feature({
+        geometry: new ol.geom.Point(ol.proj.transform([lat,lon],'EPSG:4326',
+        'EPSG:3857')),
+        name: 'Flight',
+        population: 4000,
+        rainfall: 500
     });
-    // console.log("Sorted array of unique");
-    // console.log(filtered);
-    
-    for(let i = 0;i<=filtered.length-1;i++){
       
-      let project4 = filtered[i];
-      flightplane_300[i] = [project4['lon'],project4['lat']];
-      
-    }
-console.log(flightplane_300);
-
-  // create a lot of points of planes on the map
-  for (var i=0; i<flightplane_300.length; i++) {
- 
-    var lon = flightplane_300[i][0];
-    var lat = flightplane_300[i][1];
-    
-    
-     var markerLocation = new L.LatLng(lat, lon);
-     L.marker(markerLocation,{icon:iconPlane}).addTo(map);
-  }
-
-})
-$.getJSON('300flights.json', function(result) {
-  data = result;
-  for (let i = 0; i <= data.length - 1; i++) {
-      if (data[i]['f15'] != '') {
-          sortFlight.push(data[i]);
-      }
-  }
- 
-  sort(sortFlight);
-  //Arr Of objects
-  createArrayOfObjects();
-  
-  for(let i =0;i<sortFlight.length;i++){
-    if(flightName.indexOf(sortFlight[i]['f15'])==(-1) ){
-      flightName.push(sortFlight[i]['f15']);
-      arrObject[i].position.push([sortFlight[i]['lat'],sortFlight[i]['lon']]);
-      arrObject[i].time.push(sortFlight[i]['dati']);
-    }
-    else{
-      arrObject[flightName.indexOf(sortFlight[i]['f15'])].position.push([sortFlight[i]['lat'], sortFlight[i]['lon']]);
-            arrObject[flightName.indexOf(sortFlight[i]['f15'])].time.push(sortFlight[i]['dati']);
-    }
-  }
-
-  for(let i =0;i<flightName.length;i++){
-    arrObject[i].name = flightName[i];
-  }
-  for(let i =0;i<arrObject.length;i++){
-    if(arrObject[i].name != ""){
-      arrObjectCor[i] = arrObject[i];
-    } 
-  }
-  console.log(arrObjectCor);
-
-for(let i =0;i<arrObjectCor.length;i++){
-  L.polyline(arrObjectCor[i].position,{color:'red'}).addTo(map);
-}
-
-
-// for(let i=0;i<arrObjectCor.length;i++){
-//   let project4 = arrObjectCor[i].position[0];
-//   L.marker(project4,{icon:iconPlane}).addTo(map);
-//   console.log(project4);
-// }
-
-
-});
-function createArrayOfObjects(){
-  for(let i = 0;i<data.length;i++){
-    arrObject[i]={name: '',position:[],time:[]};
-  }
-}
-
-
-
-
-
-
-
-var iconPlane = L.icon({
-  iconUrl:'/проект/plane.png',
-  iconSize: [48, 48],
-}); 
-// L.marker([40.9032,29.3132],{icon: iconPlane}).addTo(map);   
-
-
-
-//animate plane
-function planefly(){
-  var iconPlane = L.icon({
-    iconUrl:'/проект/plane.png',
-    iconSize: [48, 48],
-  });
-
-  let pathline = L.polyline(flightplane,{color:'red'});
-  pathline.addTo(map);
-  // var pathLinePlane = L.polyline(flightplane);
-  // var animatedMarker = L.animatedMarker(pathLinePlane.getLatLngs(), {
-  //   icon: iconPlane
-  // });
-    let index=0;
-    let current=time[0];
-    let id = setInterval(frame,1000);
-    function frame(){
-        console.log("current :" + current+" time :"+time[index] + " index :" +index);
-          if(current == time[index]){ 
-            ++index;
-              var animationMarker = L.Marker.movingMarker(
-                flightplane,
-                20000,{autostart: true});
-                animationMarker.options.icon = iconPlane;
-              map.addLayer(animationMarker);
-          }
+    iconFeature.setStyle(
+        new ol.style.Style({
+         
+               image: new ol.style.Icon(({
+           
+               anchor: [0.5, 250],
+           
+               anchorXUnits: 'fraction',
+           
+               anchorYUnits: 'pixels',
+           
+               opacity: 1,
+             
+               scale: 0.09,
+           
+               src: 'plane.png'
+         
+            }))
+       
+        })
+    );
+    arrFeatures.push(iconFeature);
         
-    if(current<time[index])
-    current++;
+    var vectorSource = new ol.source.Vector({
+        features: arrFeatures
+      });
+    
+      var vectorLayer = new ol.layer.Vector({
+        source: vectorSource
+      });
+    
+    map.addLayer(vectorLayer); 
+    
+
+
+    return iconFeature;
+}
+
+
+
+function drawPolyline(lat,lon){
+    var line = new ol.geom.LineString(lat,lon);
+    line.transform('EPSG:4326','EPSG:3857');
+    var feature = new ol.Feature(line);
+    var sourceVector = new ol.source.Vector();
+    sourceVector.addFeature(feature);
+    var red = new ol.style.Style({
+        
+        stroke: new ol.style.Stroke({
+          color: 'red',
+          width: 1,
+        })
       
-      
+          });
+    var layer = new ol.layer.Vector({
+        source: sourceVector,
+        style:red
+    });
+    map.addLayer(layer);
+
+}
+
+
+var parse = function(event){
+    var input = event.target;
+    var reader = new FileReader();
+    reader.onload = function(){
+        var text = reader.result;
+        JSONstirngs = text;
+        objectParsedJSON= JSON.parse(JSONstirngs);
+        Sort(objectParsedJSON);
+        changeTime();
+
+        // let ind=0;
+            planes.forEach(element=>{
+                if(element.TimeNew.length != 0){
+                    element.ExempleFeature = drawPlane(element.Puth[0][0],element.Puth[0][1]);
+                    drawPolyline(element.Puth);
+                }
+                
+            // console.log(" Name: " + element.name+" "+" Position: "+element.Puth + "Time :" + element.Time);
+            //                            ind++;
+        });
+    };
+    reader.readAsText(input.files[0]);
+
+}
+
+
+
+
+function Fly(){
+    var CurrentTime= StartTime;
+    var e = document.getElementById("echo");
+    var echo = e.options[e.selectedIndex].value;
+    let id = setInterval(frame, echo);
+    function frame(){
+        planes.forEach(element=>{
+            if(element.TimeNew.indexOf(CurrentTime.toString())!=(-1)){
+                element.ExempleFeature.setGeometry(new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857')));
+                console.log(element.TimeNew.indexOf(CurrentTime.toString())+"  current time: " + CurrentTime +"  End time: "+ EndTime);    
+            }
+        });
+                CurrentTime++;
+            if (CurrentTime == EndTime)clearInterval(id);
     }
 }
 
 
+function Sort(arrayOfJSON){
+    StartTime=arrayOfJSON[0].dati;
+    EndTime = arrayOfJSON[arrayOfJSON.length-1].dati;
+    for(let i=0; i<arrayOfJSON.length;i++){
+        //   sortFlight[i]= [arrayOfJSON[i].lon,arrayOfJSON[i].lat];
+        //   time[i] = [arrayOfJSON[i].f1];
+        // if(arrayOfJSON[i].dati >= arrEp[0] && arrayOfJSON[i].dati <= arrEp[1])
+        // {
+            if(flightName.indexOf(arrayOfJSON[i].f15)==(-1) && arrayOfJSON[i].f15!="")
+            {
 
-let pick = document.getElementById('name');
-pick.onchange = function(){
-  let a = document.getElementById('name').value;
-  if(a="TK7434"){
-    planefly();
-    console.log(a);
-  }
-  // else if(a="300flights") {
-  //   flights_300Fly();
-  //   console.log(a);
-  // }
+                flightName.push(arrayOfJSON[i].f15);
+                planes.push(new Plane(arrayOfJSON[i].f15));
+            planes[planes.length-1].Puth.push([arrayOfJSON[i].lon,arrayOfJSON[i].lat]);
+            // if(i%2==0){
+            //     planes[planes.length-1].Time.push(arrEp[0]);
+            // }else{
+            //     planes[planes.length-1].Time.push(arrEp[1]);
+            // }
+            planes[planes.length-1].Time.push(arrayOfJSON[i].dati);
+            }
+            else 
+            {
+                if(arrayOfJSON[i].f15!=""){
+                    planes[flightName.indexOf(arrayOfJSON[i].f15)].Puth.push([arrayOfJSON[i].lon,arrayOfJSON[i].lat]); 
+                    planes[flightName.indexOf(arrayOfJSON[i].f15)].Time.push(arrayOfJSON[i].dati);
+                    // if(i%2==0){
+                    //     planes[flightName.indexOf(arrayOfJSON[i].f15)].Time.push(arrEp[0]);
+                    // }else{
+                    //     planes[flightName.indexOf(arrayOfJSON[i].f15)].Time.push(arrEp[1]);
+                    // }  
+                } 
+            }
+        // }
+    
+    }
+    
+
+    console.log("array of time");
+    for(let i =0;i<planes.length;i++){
+        console.log(planes[i].Time);
+    }
+    
+    // console.log(sortFlight);
+    // console.log(time);
+};
+
+function changeTime(){
+    for(let i=0; i<planes.length;i++){
+        if(planes[i].Time[0]>=arrEp[0]&&planes[i].Time[planes[i].Time.length-1]<=arrEp[1]){
+            for(let k = 0;k<planes[i].Time.length;k++){
+                planes[i].TimeNew.push(planes[i].Time[k]);
+            }
+            
+        }
+    }
+    console.log("array of TimeNew");
+    for(let i =0;i<planes.length;i++){
+        console.log(planes[i].TimeNew);
+    }
+}
+
+function setEpoch(){
+    ep1= parseInt(document.getElementById('epoch1').value);
+    ep2=parseInt(document.getElementById('epoch2').value);
+
+    arrEp.push(ep1,ep2);
+    console.log(arrEp);
 }
 
 
 
 
-
-
-
-
-
-
-
-
-
-
+  
