@@ -31,6 +31,15 @@ var map = new ol.Map({
     layers: [
       new ol.layer.Tile({
         source: new ol.source.OSM()
+      }),
+      new ol.layer.Graticule({
+          strokeStyle: new ol.style.Stroke({
+              color: 'green',
+              width: 2,
+              lineDash: [0.5,4]
+          }),
+          showLabels: true,
+          wrapX: false
       })
     ],
     view: new ol.View({
@@ -39,74 +48,85 @@ var map = new ol.Map({
     })
 });
 
-let canvas = document.querySelector('canvas'),
-context = canvas.getContext('2d');
+let canvas = document.querySelector('canvas');
+// context = canvas.getContext('2d');
+var vectorContext = ol.render.toContext(canvas.getContext('2d'), {size: [150,150]});
 
-function drawGrid() {
-    arrayOfX = [];
-    arrayOfY = [];
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    newX = parseInt(document.updeteGrid.newX.value);
-    newY = parseInt(document.updeteGrid.newY.value);
-    context.beginPath();
-    
-    for ( x = 0; x <= canvas.width; x += newX) {
-      context.moveTo(x, 0);
-      context.lineTo(x, canvas.height);
+this.Graticule = new ol.layer.Graticule({
+    numPoints: 2,
+    labelled: true,
+    lineSymbolizer:{strokeColor: "#ffffff", strokeWidth: 1, strokeOpacity: 0.2},
+    labelSymbolizer: {
+        fontColor: "#ffffff",
+        fontSize: "12px"
     }
-  
-    for ( y = 0; y <= canvas.height; y += newY) {
-      context.moveTo(0, y);
-      context.lineTo(canvas.width, y);
-    }
-  
-    context.stroke();
-  
-    for ( x = 0; x <= canvas.width; x += newX) {
-      arrayOfX.push(Math.floor(x));
-    }
-  
-    for ( y = 0; y <= canvas.height; y += newY) {
-      arrayOfY.push(Math.floor(y));
-    }
-  
-}
-  
-document.getElementById('removeGreed').addEventListener('click',function(){
-   
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    canvas.style.zIndex = '1';
-    
 });
-document.getElementById('returnGreed').addEventListener('click',function(){
+
+// function drawGrid() {
+//     arrayOfX = [];
+//     arrayOfY = [];
+//     context.clearRect(0, 0, canvas.width, canvas.height);
+//     newX = parseInt(document.updeteGrid.newX.value);
+//     newY = parseInt(document.updeteGrid.newY.value);
+//     context.beginPath();
     
-    drawGrid();
-    canvas.style.zIndex = '4';
-})
-
-canvas.onmousedown = function (event) {
-    x = event.offsetX;
-    y = event.offsetY;
-};
-
-canvas.onmouseup = function (event) {
+//     for ( x = 0; x <= canvas.width; x += newX) {
+//       context.moveTo(x, 0);
+//       context.lineTo(x, canvas.height);
+//     }
   
-for (let i = 0; i < arrayOfX.length; i++) {
-      if (x <= arrayOfX[i + 1] && x >= arrayOfX[i]) {
-        profit.push(arrayOfX[i]);
-      }
-}
-for (let i = 0; i < arrayOfY.length; i++) {
-    if (y <= arrayOfY[i + 1] && y >= arrayOfY[i]) {
-        profit.push(arrayOfY[i]);
-    }
-}
-context.rect(profit[0] + 0.5, profit[1], newX, newY);
-context.fillStyle = "red";
-context.fill();
-profit = [];
+//     for ( y = 0; y <= canvas.height; y += newY) {
+//       context.moveTo(0, y);
+//       context.lineTo(canvas.width, y);
+//     }
   
-};
+//     context.stroke();
+  
+//     for ( x = 0; x <= canvas.width; x += newX) {
+//       arrayOfX.push(Math.floor(x));
+//     }
+  
+//     for ( y = 0; y <= canvas.height; y += newY) {
+//       arrayOfY.push(Math.floor(y));
+//     }
+  
+// }
+  
+// document.getElementById('removeGreed').addEventListener('click',function(){
+   
+//     context.clearRect(0, 0, canvas.width, canvas.height);
+//     canvas.style.zIndex = '1';
+    
+// });
+// document.getElementById('returnGreed').addEventListener('click',function(){
+    
+//     drawGrid();
+//     canvas.style.zIndex = '4';
+// })
+
+// canvas.onmousedown = function (event) {
+//     x = event.offsetX;
+//     y = event.offsetY;
+// };
+
+// canvas.onmouseup = function (event) {
+  
+// for (let i = 0; i < arrayOfX.length; i++) {
+//       if (x <= arrayOfX[i + 1] && x >= arrayOfX[i]) {
+//         profit.push(arrayOfX[i]);
+//       }
+// }
+// for (let i = 0; i < arrayOfY.length; i++) {
+//     if (y <= arrayOfY[i + 1] && y >= arrayOfY[i]) {
+//         profit.push(arrayOfY[i]);
+//     }
+// }
+// context.rect(profit[0] + 0.5, profit[1], newX, newY);
+// context.fillStyle = "red";
+// context.fill();
+// profit = [];
+  
+// };
 
 class Plane{
     constructor(Name){
@@ -179,7 +199,7 @@ function drawPolyline(lat,lon){
         
         stroke: new ol.style.Stroke({
           color: 'red',
-          width: 1,
+          width: 3,
         })
       
           });
@@ -218,7 +238,7 @@ var parse = function(event){
 }
 
 
-
+// var degrees = 360-(angle*180/Math.PI)-90;
 
 function Fly(){
     var CurrentTime= StartTime;
@@ -228,7 +248,15 @@ function Fly(){
     function frame(){
         planes.forEach(element=>{
             if(element.TimeNew.indexOf(CurrentTime.toString())!=(-1)){
+                var point1 = new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857'));
+                var point2 = new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857'));
+                var x = point2.getCoordinates()[0]-point1.getCoordinates()[0];
+                var y = point2.getCoordinates()[1]-point1.getCoordinates()[1];
+                var angle = Math.atan2(x,y) - 89.5;
+                
+                element.ExempleFeature.getStyle().getImage().setRotation(angle);
                 element.ExempleFeature.setGeometry(new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857')));
+                
                 console.log(element.TimeNew.indexOf(CurrentTime.toString())+"  current time: " + CurrentTime +"  End time: "+ EndTime);    
             }
         });
@@ -276,10 +304,10 @@ function Sort(arrayOfJSON){
     }
     
 
-    console.log("array of time");
-    for(let i =0;i<planes.length;i++){
-        console.log(planes[i].Time);
-    }
+    // console.log("array of time");
+    // for(let i =0;i<planes.length;i++){
+    //     console.log(planes[i].Time);
+    // }
     
     // console.log(sortFlight);
     // console.log(time);
@@ -294,10 +322,10 @@ function changeTime(){
             
         }
     }
-    console.log("array of TimeNew");
-    for(let i =0;i<planes.length;i++){
-        console.log(planes[i].TimeNew);
-    }
+    // console.log("array of TimeNew");
+    // for(let i =0;i<planes.length;i++){
+    //     console.log(planes[i].TimeNew);
+    // }
 }
 
 function setEpoch(){
