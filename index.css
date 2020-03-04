@@ -1,18 +1,19 @@
 html,body{
     margin: 0;
     padding: 0;
+    
 }
 
-html,body,#map {
-    position: relative;
-    z-index: 1;
+#map {
     width: 1200px;
     height: 584px;
+    
 }
 
 #canvo{
     position: absolute;
-    z-index: 4;
+    z-index: 3;
+    pointer-events: none; 
     width: 1200px;
     height: 584px;
 }
@@ -24,7 +25,7 @@ html,body,#map {
 form {
     padding-top: 10px;
     width: 400px;
-    height: 500px;
+    height: 400px;
     display: flex;
     flex-direction: column;
     border: 1px solid lightgrey;

@@ -9,10 +9,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
-    <canvas id="canvo" width="1200" height="584"></canvas>
+    <canvas id="canvo"></canvas>
     <div id="map"></div>
 
     <select id="echo" >
+        <option value="0.5">0.5</option>
         <option value="50">50</option>
       <option value="400">400</option>
       <option value="500">500</option>
@@ -32,11 +33,11 @@
         <input name="epoch1" size="25"  placeholder="Epoch start" id="epoch1">
         <input name="epoch2" size="25" placeholder="Epoch finish" id="epoch2">
         <input type="button" value="execute" class ="btn" onclick="setEpoch()">
-        <input name="newX" size="25" placeholder="X">
-        <input name="newY" size="25" placeholder="Y"> 
-        <input type="button" value="apply" onclick="drawGrid()" class="btn">
-        <input type="button" value="remove"  id="removeGreed">
-        <input type="button" value="return"  id="returnGreed">
+        <input name="newX" size="25" placeholder="X" id="CourX">
+        <input name="newY" size="25" placeholder="Y" id="CourY"> 
+        <input type="button" value="apply" onclick="getValue()" class="btn">
+        <!-- <input type="button" value="remove"  id="removeGreed">
+        <input type="button" value="return"  id="returnGreed"> -->
         <input type="button" value="fly" id="fly" onclick="Fly()">
         <input type='file' accept='text/plain' onchange='parse(event)'>
     </Form>
