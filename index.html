@@ -7,13 +7,14 @@
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="OL/ol.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="jquery-input-file-text.js"></script>
 </head>
 <body>
     <canvas id="canvo"></canvas>
     <div id="map"></div>
 
     <select id="echo" >
-        <option value="0.5">0.5</option>
+        <option value="1">1</option>
         <option value="50">50</option>
       <option value="400">400</option>
       <option value="500">500</option>
@@ -39,7 +40,7 @@
         <!-- <input type="button" value="remove"  id="removeGreed">
         <input type="button" value="return"  id="returnGreed"> -->
         <input type="button" value="fly" id="fly" onclick="Fly()">
-        <input type='file' accept='text/plain' onchange='parse(event)'>
+        <input type='file' accept='text/plain' onchange='parse(event)' id="choose-file" >
     </Form>
     <script src="OL/ol.js"></script>
     <script src="index.js"></script>

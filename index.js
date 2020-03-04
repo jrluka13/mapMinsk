@@ -20,7 +20,9 @@ let ep2;
 let arrEp = [];
 let LaTLonRadars = [[28.894,38.634],[ 34.146,40.897 ],[39.88,37.805]];
 
-
+$('#choose-file').inputFileText({
+    text: 'Select File'
+});
 
 var map = new ol.Map({
     target: 'map',
@@ -320,7 +322,7 @@ var parse = function(event){
 }
 
 
-// var degrees = 360-(angle*180/Math.PI)-90;
+
 
 function Fly(){
     var CurrentTime= StartTime;
@@ -331,25 +333,55 @@ function Fly(){
         planes.forEach(element=>{
             if(element.TimeNew.indexOf(CurrentTime.toString())!=(-1)){
                 for(let i=0;i<element.Puth.length;i++){
-                    if(element.Puth[i][0] >= 32.585 && element.Puth[i][0] <= 35.76 && element.Puth[i][1] >=39.69 && element.Puth[i][1] <=42.131){
+                    if( "32.585" <= element.Puth[i][0] <= "35.76" && "39.69" <= element.Puth[i][1] <= "42.131"){
+                        element.ExempleFeature.getStyle().setImage(
+                            new ol.style.Icon(({
+           
+                                anchor: [0.5, 250],
+                                anchorXUnits: 'fraction',
+           
+                                anchorYUnits: 'pixels',
+                            
+                                opacity: 1,
+                              
+                                scale: 0.09,
+                            
+                                src: 'planeGreen.png'
+                          
+                             }))
+                        );
                         var point1 = new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857'));
                         var point2 = new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())+1], 'EPSG:4326','EPSG:3857'));
                         var x = point2.getCoordinates()[0]-point1.getCoordinates()[0];
                         var y = point2.getCoordinates()[1]-point1.getCoordinates()[1];
                         var angle = Math.atan2(x,y) - 89.5;
                         element.ExempleFeature.getStyle().getImage().setRotation(angle);
-                        // element.ExempleFeature.getStyle().setImage().setUrl('planeGreen.png');
-                        
                         element.ExempleFeature.setGeometry(new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857')));
-                        
-                        console.log(element.TimeNew.indexOf(CurrentTime.toString())+"  current time: " + CurrentTime +"  End time: "+ EndTime);
-                    }else{
+                        // console.log(element.TimeNew.indexOf(CurrentTime.toString())+"  current time: " + CurrentTime +"  End time: "+ EndTime);
+                    }else if ("32.585" >= element.Puth[i][0] >= "35.76" && "39.69" >= element.Puth[i][1] >= "42.131"){
+                        element.ExempleFeature.getStyle().setImage(
+                            new ol.style.Icon(({
+           
+                                anchor: [0.5, 250],
+                                anchorXUnits: 'fraction',
+           
+                                anchorYUnits: 'pixels',
+                            
+                                opacity: 1,
+                              
+                                scale: 0.09,
+                            
+                                src: 'planeRed.png'
+                          
+                             }))
+                        );
                         var point1 = new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857'));
                         var point2 = new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())+1], 'EPSG:4326','EPSG:3857'));
                         var x = point2.getCoordinates()[0]-point1.getCoordinates()[0];
                         var y = point2.getCoordinates()[1]-point1.getCoordinates()[1];
                         var angle = Math.atan2(x,y) - 89.5;
                         element.ExempleFeature.getStyle().getImage().setRotation(angle);
+                        
                         element.ExempleFeature.setGeometry(new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857')));
                         
                         console.log(element.TimeNew.indexOf(CurrentTime.toString())+"  current time: " + CurrentTime +"  End time: "+ EndTime);
