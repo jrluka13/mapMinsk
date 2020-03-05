@@ -323,98 +323,106 @@ var parse = function(event){
 
 
 
-
 function Fly(){
+    let lengthFromRadar = Math.sqrt(Math.pow((34.146 - 31.8977), 2) 
+    + Math.pow((40.897 - 40.5443), 2));
+    console.log(lengthFromRadar);
     var CurrentTime= StartTime;
     var e = document.getElementById("echo");
     var echo = e.options[e.selectedIndex].value;
     let id = setInterval(frame, echo);
     function frame(){
         planes.forEach(element=>{
+            
             if(element.TimeNew.indexOf(CurrentTime.toString())!=(-1)){
-                for(let i=0;i<element.Puth.length;i++){
-                    if( "32.585" <= element.Puth[i][0] <= "35.76" && "39.69" <= element.Puth[i][1] <= "42.131"){
-                        element.ExempleFeature.getStyle().setImage(
-                            new ol.style.Icon(({
-           
-                                anchor: [0.5, 250],
-                                anchorXUnits: 'fraction',
-           
-                                anchorYUnits: 'pixels',
-                            
-                                opacity: 1,
-                              
-                                scale: 0.09,
-                            
-                                src: 'planeGreen.png'
-                          
-                             }))
-                        );
-                        var point1 = new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857'));
-                        var point2 = new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())+1], 'EPSG:4326','EPSG:3857'));
-                        var x = point2.getCoordinates()[0]-point1.getCoordinates()[0];
-                        var y = point2.getCoordinates()[1]-point1.getCoordinates()[1];
-                        var angle = Math.atan2(x,y) - 89.5;
-                        element.ExempleFeature.getStyle().getImage().setRotation(angle);
-                        element.ExempleFeature.setGeometry(new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857')));
-                        // console.log(element.TimeNew.indexOf(CurrentTime.toString())+"  current time: " + CurrentTime +"  End time: "+ EndTime);
-                    }else if ("32.585" >= element.Puth[i][0] >= "35.76" && "39.69" >= element.Puth[i][1] >= "42.131"){
-                        element.ExempleFeature.getStyle().setImage(
-                            new ol.style.Icon(({
-           
-                                anchor: [0.5, 250],
-                                anchorXUnits: 'fraction',
-           
-                                anchorYUnits: 'pixels',
-                            
-                                opacity: 1,
-                              
-                                scale: 0.09,
-                            
-                                src: 'planeRed.png'
-                          
-                             }))
-                        );
-                        var point1 = new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857'));
-                        var point2 = new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())+1], 'EPSG:4326','EPSG:3857'));
-                        var x = point2.getCoordinates()[0]-point1.getCoordinates()[0];
-                        var y = point2.getCoordinates()[1]-point1.getCoordinates()[1];
-                        var angle = Math.atan2(x,y) - 89.5;
-                        element.ExempleFeature.getStyle().getImage().setRotation(angle);
-                        
-                        element.ExempleFeature.setGeometry(new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857')));
-                        
-                        console.log(element.TimeNew.indexOf(CurrentTime.toString())+"  current time: " + CurrentTime +"  End time: "+ EndTime);
-                    }
+                let disPlanetoRadar = null; 
+                
+                for(let i =0; i< element.Puth.length;i++){
+                    disPlanetoRadar =  Math.sqrt(Math.pow((34.146 - element.Puth[i][0]), 2) 
+                    + Math.pow((40.897 - element.Puth[i][1]), 2));
+                    // console.log(disPlanetoRadar);   
                 }
+                if(disPlanetoRadar>lengthFromRadar){
+                    console.log(disPlanetoRadar);
+                    console.log("false")
+                    element.ExempleFeature.getStyle().setImage(
+                        new ol.style.Icon(({
+       
+                            anchor: [0.5, 250],
+                        
+                            anchorXUnits: 'fraction',
+                        
+                            anchorYUnits: 'pixels',
+                        
+                            opacity: 1,
+                          
+                            scale: 0.09,
+                        
+                            src: 'planeRed.png'
+                      
+                         }))
+                    );
+                }
+                else if(disPlanetoRadar<lengthFromRadar){
+                    console.log("True")
+                    element.ExempleFeature.getStyle().setImage(
+                        new ol.style.Icon(({
+       
+                            anchor: [0.5, 250],
+                        
+                            anchorXUnits: 'fraction',
+                        
+                            anchorYUnits: 'pixels',
+                        
+                            opacity: 1,
+                          
+                            scale: 0.09,
+                        
+                            src: 'planeGreen.png'
+                      
+                         }))
+                    );
+                }
+                let ind= parseInt(element.TimeNew.indexOf(CurrentTime.toString()));
+                var point1 = new ol.geom.Point(ol.proj.transform(element.Puth[ind], 'EPSG:4326','EPSG:3857'));
+                var point2=null;
+                if(element.Puth[ind+1] == undefined)
+                {
+                point2 = new ol.geom.Point(ol.proj.transform([element.Puth[ind][0],element.Puth[ind][1]], 'EPSG:4326','EPSG:3857'));
+                }
+                else{
+                point2 = new ol.geom.Point(ol.proj.transform([element.Puth[ind+1][0],element.Puth[ind+1][1]], 'EPSG:4326','EPSG:3857'));
+                }
+                let dx= point2.getCoordinates()[0]-point1.getCoordinates()[0];
+                let dy = point2.getCoordinates()[1]-point1.getCoordinates()[1];   
+                var angle =360-Math.atan2(dy,dx)*180 / Math.PI;
+
+                if(element.Puth[ind+1] != undefined){
+                element.ExempleFeature.getStyle().getImage().setRotation(angle*0.017);}  
+                element.ExempleFeature.setGeometry(new ol.geom.Point(ol.proj.transform(element.Puth[element.TimeNew.indexOf(CurrentTime.toString())], 'EPSG:4326','EPSG:3857')));
+                // console.log(element.TimeNew.indexOf(CurrentTime.toString())+"  current time: " + CurrentTime +"  End time: "+ EndTime);
                     
-            }
+            }   
+            
         });
-                CurrentTime++;
-            if (CurrentTime == EndTime)clearInterval(id);
+           CurrentTime++;
+        if (CurrentTime == EndTime)clearInterval(id);
     }
 }
+
 
 
 function Sort(arrayOfJSON){
     StartTime=arrayOfJSON[0].dati;
     EndTime = arrayOfJSON[arrayOfJSON.length-1].dati;
     for(let i=0; i<arrayOfJSON.length;i++){
-        //   sortFlight[i]= [arrayOfJSON[i].lon,arrayOfJSON[i].lat];
-        //   time[i] = [arrayOfJSON[i].f1];
-        // if(arrayOfJSON[i].dati >= arrEp[0] && arrayOfJSON[i].dati <= arrEp[1])
-        // {
             if(flightName.indexOf(arrayOfJSON[i].f15)==(-1) && arrayOfJSON[i].f15!="")
             {
 
                 flightName.push(arrayOfJSON[i].f15);
                 planes.push(new Plane(arrayOfJSON[i].f15));
             planes[planes.length-1].Puth.push([arrayOfJSON[i].lon,arrayOfJSON[i].lat]);
-            // if(i%2==0){
-            //     planes[planes.length-1].Time.push(arrEp[0]);
-            // }else{
-            //     planes[planes.length-1].Time.push(arrEp[1]);
-            // }
+           
             planes[planes.length-1].Time.push(arrayOfJSON[i].dati);
             }
             else 
@@ -422,25 +430,14 @@ function Sort(arrayOfJSON){
                 if(arrayOfJSON[i].f15!=""){
                     planes[flightName.indexOf(arrayOfJSON[i].f15)].Puth.push([arrayOfJSON[i].lon,arrayOfJSON[i].lat]); 
                     planes[flightName.indexOf(arrayOfJSON[i].f15)].Time.push(arrayOfJSON[i].dati);
-                    // if(i%2==0){
-                    //     planes[flightName.indexOf(arrayOfJSON[i].f15)].Time.push(arrEp[0]);
-                    // }else{
-                    //     planes[flightName.indexOf(arrayOfJSON[i].f15)].Time.push(arrEp[1]);
-                    // }  
+                  
                 } 
             }
-        // }
+        
     
     }
     
 
-    // console.log("array of time");
-    // for(let i =0;i<planes.length;i++){
-    //     console.log(planes[i].Puth);
-    // }
-    
-    // console.log(sortFlight);
-    // console.log(time);
 };
 
 function changeTime(){
@@ -452,10 +449,7 @@ function changeTime(){
             
         }
     }
-    // console.log("array of TimeNew");
-    // for(let i =0;i<planes.length;i++){
-    //     console.log(planes[i].TimeNew);
-    // }
+    
 }
 
 function setEpoch(){
